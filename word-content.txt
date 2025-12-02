@@ -1,0 +1,82 @@
+[1] Escena 1: Introducción a la Computación Óptica
+
+[2] La computación óptica es un paradigma tecnológico que utiliza la luz, mediante fotones, para procesar, almacenar y transmitir información, en lugar de usar electrones como en la computación electrónica tradicional. Lo que hace única a esta tecnología es que la luz puede viajar extremadamente rápido (casi 300,000 km/s) y puede codificar datos en propiedades como la amplitud, fase y longitud de onda, lo que permite cálculos masivamente paralelos y a gran velocidad. Además, los dispositivos ópticos generan mucho menos calor y consumen menos energía que los electrónicos, superando así limitaciones térmicas y energéticas. Para hacer posible la computación óptica, se emplean elementos fotónicos como lentes, espejos, láseres y fibras ópticas, además de un diseño de circuitos fotónicos que puede ser completamente óptico o híbrido, combinando luz con electrónica cuando es necesario. En esencia, los datos binarios se transforman en pulsos de luz que se manipulan para realizar operaciones de lógica y cálculos complejos.​
+
+[3] Escena 2: Estado Actual en 2025
+
+[4] En 2025, la computación óptica está en una etapa avanzada de investigación y desarrollo, con numerosos prototipos y avances significativos. Por ejemplo, la universidad de Aalto ha desarrollado una técnica que permite realizar operaciones tensoriales para inteligencia artificial en un solo pulso de luz, acelerando procesamientos que normalmente consumirían mucho tiempo y energía en procesadores electrónicos tradicionales. Empresas como Lightmatter han presentado chips ópticos capaces de acelerar tareas de IA con un consumo energético mucho más bajo que los chips convencionales. También hay avances en memorias ópticas temporales y switches ópticos para centros de datos que permiten la interconexión eficiente y la reducción del consumo energético en redes de alta demanda. Sin embargo, la tecnología aún está por salir del laboratorio y no ha alcanzado una adopción masiva en dispositivos comerciales, pero se estima que en los próximos 3 a 5 años podría incorporarse a grandes modelos de IA y sistemas reales como smartphones y vehículos autónomos.​​
+
+[5] Escena 3: Retos y Desafíos
+
+[6] Aunque la computación óptica promete revolucionar la informática, enfrenta varios retos importantes. Uno de los más difíciles es la integración a gran escala: combinar muchos componentes fotónicos en un solo chip de forma confiable y con bajo ruido es un desafío técnico complicado, pues los sistemas ópticos pueden ser muy sensibles a imperfecciones y pérdidas. Además, la fabricación precisa de materiales y estructuras para manipular fotones con exactitud sigue siendo un reto. Otro inconveniente es el ruido óptico y la necesidad de interfacing con sistemas electrónicos, lo que lleva a desarrollar arquitecturas híbridas opto-electrónicas mientras no se logre la computación completamente óptica. El control y la conmutación en tiempo real también requieren avances en dispositivos fotónicos activos. Sin embargo, la investigación sigue intensamente y están surgiendo nuevas técnicas para superar estos obstáculos, incluyendo diodos ópticos diseñados para facilitar la gestión de datos entre óptica y electrónica.​
+
+[7] Escena 4: Futuro y Aplicaciones
+
+[8] El futuro de la computación óptica es muy prometedor y se espera que en un plazo de 3 a 5 años surjan chips fotónicos comerciales que permitan integrar esta tecnología en la inteligencia artificial, vehículos autónomos, dispositivos móviles y centros de datos. La meta es que estos chips realicen cálculos complejos a la velocidad de la luz, consumiendo mucha menos energía que los sistemas actuales. Esto no solo revolucionará la eficiencia energética, sino que permitirá nuevos niveles de velocidad y capacidad para aplicaciones como análisis de imágenes, procesamiento de lenguaje natural, grandes bases de datos y redes neuronales profundas. Se prevé que la computación óptica amplíe el horizonte de la inteligencia artificial, haciendo posible manejar enormes cantidades de datos y operaciones en paralelo más rápidamente y con menor impacto ambiental.​
+
+[9] Escena 1: Introducción
+
+[10] La computación óptica utiliza luz, en lugar de electricidad, para procesar y transmitir información.
+
+[11] Los fotones viajan a la velocidad de la luz, permitiendo cálculos y transmisión de datos extremadamente rápidos.
+
+[12] Los sistemas ópticos generan menos calor, reduciendo la necesidad de enfriamiento y el consumo energético.
+
+[13] En la computación óptica, la información se codifica en haces y ondas de luz, manipulados con lentes, espejos y láseres.
+
+[14] Esta tecnología promete superar las limitaciones de velocidad y consumo de la computación electrónica tradicional.
+
+[15] Escena 2: Estado Actual (2025)
+
+[16] En 2025, existen prototipos de chips ópticos que aceleran el procesamiento de inteligencia artificial con un consumo energético muy bajo.
+
+[17] Se han desarrollado técnicas para realizar cálculos complejos en un solo pulso de luz, optimizando operaciones tensoriales.
+
+[18] La computación óptica está siendo explorada para uso en centros de datos, análisis de imágenes y procesamiento de lenguaje natural.
+
+[19] Aunque todavía mayormente en investigación, se prevé su incorporación en productos comerciales en los próximos años.
+
+[20] Escena 3: Retos y Desafíos
+
+[21] La integración de cientos o miles de componentes fotónicos en un solo chip es un gran reto técnico.
+
+[22] La fabricación precisa para manipular fotones sin pérdidas significativas requiere avances en materiales y diseño.
+
+[23] El ruido óptico y la interfase con electrónica tradicional hacen necesarios todavía sistemas híbridos opto-electrónicos.
+
+[24] La conmutación y control rápido de señales ópticas demanda desarrollos en dispositivos fotónicos activos y bajo ruido.
+
+[25] Escena 4: Futuro y Aplicaciones
+
+[26] Se espera que en 3 a 5 años existan chips fotónicos comerciales para IA, vehículos autónomos y dispositivos móviles.
+
+[27] La computación óptica permitirá procesar grandes cantidades de datos a la velocidad de la luz con muy bajo consumo energético.
+
+[28] Cambiará la arquitectura de centros de datos y sistemas inteligentes, haciéndolos más rápidos y sostenibles.
+
+[29] Abrirá nuevas posibilidades para el desarrollo de inteligencia artificial avanzada y tareas computacionales complejas.
+
+[30] Datos Relevantes y Curiosidades
+
+[31] La luz viaja a casi 300,000 km/s, mientras que los electrones avanzan mucho más lento en los circuitos eléctricos.
+
+[32] Un chip óptico puede realizar múltiples tareas en paralelo multiplicando las ondas de luz, logrando un paralelo masivo.
+
+[33] Los sistemas ópticos reducen los problemas de interferencias electromagnéticas presentes en la electrónica convencional.
+
+[34] La computación óptica opera a temperatura ambiente, a diferencia de muchas tecnologías prometedoras que requieren refrigeración extrema.
+
+[35] El avance en fotónica y metamateriales está haciendo posible resolver problemas matemáticos complejos usando luz.
+
+[36] Datos Relevantes y Curiosidades
+
+[37] La luz viaja tan rápido que la información puede procesarse en el tiempo que tarda un pulso láser en cruzar un chip especializado, permitiendo operaciones simultáneas en paralelo, conocidas como computación tensorial óptica.​
+
+[38] La luz puede codificar múltiples datos en distintas longitudes de onda, imprimiendo un potencial paralelo imposible de conseguir con electrones en cobre tradicional.​
+
+[39] Los chips ópticos actuales pueden reducir el consumo energético hasta un orden de magnitud respecto a CPUs tradicionales, clave para el crecimiento sostenible de centros de datos con alta demanda energética.​
+
+[40] Aunque la computación cuántica sigue siendo un campo muy explorado, la óptica pura tiene la ventaja de operar a temperatura ambiente sin necesidad de refrigeración extrema.​
+
+[41] La computación óptica abre la puerta a la próxima revolución tecnológica, integrando inteligencia artificial y nuevas arquitecturas que cambian la forma en que guardamos y procesamos la información.
+

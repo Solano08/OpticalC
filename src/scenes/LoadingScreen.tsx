@@ -1,0 +1,441 @@
+import { type FC, useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useLoading } from '../context/LoadingContext';
+
+interface Particle {
+    x: number;
+    y: number;
+    z: number;
+    size: number;
+    opacity: number;
+    baseOpacity: number;
+    twinkleSpeed: number;
+    twinklePhase: number;
+    color: { r: number; g: number; b: number };
+    isGlowing: boolean;
+    glowIntensity: number;
+}
+
+const LoadingScreen: FC = () => {
+    const { isLoading, setIsLoading, triggerVideoRestart } = useLoading();
+    const [logoActive, setLogoActive] = useState(false);
+    const [processorActive, setProcessorActive] = useState(false);
+    const [logoBrightness, setLogoBrightness] = useState(0);
+    const processorActiveRef = useRef(false);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const particlesRef = useRef<Particle[]>([]);
+    const animationFrameRef = useRef<number | undefined>(undefined);
+    const startTimeRef = useRef<number>(Date.now());
+
+    const handleSkip = () => {
+        if (!processorActive) {
+            setProcessorActive(true);
+            setLogoActive(true);
+            processorActiveRef.current = true;
+
+            triggerVideoRestart();
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 2500);
+        }
+    };
+
+    // Smooth brightness animation
+    useEffect(() => {
+        if (processorActive) {
+            let frame = 0;
+            const animate = () => {
+                frame++;
+                const progress = Math.min(frame / 60, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                setLogoBrightness(eased);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            requestAnimationFrame(animate);
+        }
+    }, [processorActive]);
+
+    useEffect(() => {
+        startTimeRef.current = Date.now();
+        const logoTimer = setTimeout(() => setLogoActive(true), 1500);
+
+        return () => {
+            clearTimeout(logoTimer);
+        };
+    }, []);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const createParticle = (): Particle => {
+            const z = Math.random();
+            const temp = Math.random();
+            let color;
+
+            if (temp < 0.15) {
+                color = { r: 180, g: 200, b: 255 };
+            } else if (temp < 0.6) {
+                color = { r: 240, g: 240, b: 245 };
+            } else if (temp < 0.85) {
+                color = { r: 255, g: 245, b: 220 };
+            } else {
+                color = { r: 255, g: 200, b: 180 };
+            }
+
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                z: z,
+                size: 0.2 + z * 1.5,
+                opacity: Math.random(),
+                baseOpacity: 0.08 + z * 0.4,
+                twinkleSpeed: 0.015 + Math.random() * 0.04,
+                twinklePhase: Math.random() * Math.PI * 2,
+                color,
+                isGlowing: Math.random() < 0.2,
+                glowIntensity: 0
+            };
+        };
+
+        const initParticles = () => {
+            particlesRef.current = [];
+            // Reduced from 400 to 250 for better performance while maintaining starfield effect
+            for (let i = 0; i < 250; i++) {
+                particlesRef.current.push(createParticle());
+            }
+        };
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const nebula1 = ctx.createRadialGradient(
+                canvas.width * 0.3, canvas.height * 0.4, 0,
+                canvas.width * 0.3, canvas.height * 0.4, canvas.width * 0.6
+            );
+            nebula1.addColorStop(0, 'rgba(12, 8, 20, 0.15)');
+            nebula1.addColorStop(0.4, 'rgba(8, 5, 15, 0.08)');
+            nebula1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = nebula1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const nebula2 = ctx.createRadialGradient(
+                canvas.width * 0.7, canvas.height * 0.6, 0,
+                canvas.width * 0.7, canvas.height * 0.6, canvas.width * 0.5
+            );
+            nebula2.addColorStop(0, 'rgba(15, 12, 25, 0.12)');
+            nebula2.addColorStop(0.5, 'rgba(8, 5, 12, 0.06)');
+            nebula2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = nebula2;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particlesRef.current.forEach((p) => {
+                const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+                const speedMultiplier = 1 + (elapsedSeconds * 0.1);
+
+                p.y -= (0.3 + p.z * 0.5) * speedMultiplier;
+
+                p.twinklePhase += p.twinkleSpeed;
+                const twinkle = Math.sin(p.twinklePhase) * 0.25;
+                p.opacity = Math.max(0.05, Math.min(1, p.baseOpacity + twinkle));
+
+                if (processorActiveRef.current && p.isGlowing) {
+                    p.glowIntensity += (1 - p.glowIntensity) * 0.05;
+                }
+
+                if (p.y < -10) p.y = canvas.height + 10;
+                if (p.x < -10) p.x = canvas.width + 10;
+                if (p.x > canvas.width + 10) p.x = -10;
+
+                ctx.save();
+                ctx.globalAlpha = p.opacity;
+
+                if (p.glowIntensity > 0.01) {
+                    const glowSize = p.size * (4 + p.glowIntensity * 4);
+                    const glowGradient = ctx.createRadialGradient(
+                        p.x, p.y, 0,
+                        p.x, p.y, glowSize
+                    );
+                    glowGradient.addColorStop(0, `rgba(255, 255, 255, ${p.glowIntensity * 0.8})`);
+                    glowGradient.addColorStop(0.4, `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.glowIntensity * 0.4})`);
+                    glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, glowSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 1)`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (p.opacity > 0.7 && p.z > 0.6 && p.glowIntensity < 0.1) {
+                    const glowGradient = ctx.createRadialGradient(
+                        p.x, p.y, 0,
+                        p.x, p.y, p.size * 5
+                    );
+                    glowGradient.addColorStop(0, `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.4)`);
+                    glowGradient.addColorStop(0.5, `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.1)`);
+                    glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            });
+
+            const vignette = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, canvas.width * 0.3,
+                canvas.width / 2, canvas.height / 2, canvas.width * 0.9
+            );
+            vignette.addColorStop(0, 'rgba(0,0,0,0)');
+            vignette.addColorStop(1, 'rgba(0,0,0,0.7)');
+            ctx.fillStyle = vignette;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            animationFrameRef.current = requestAnimationFrame(animate);
+        };
+
+        initParticles();
+        animate();
+
+        return () => {
+            window.removeEventListener('resize', resizeCanvas);
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, []);
+
+    // Calculate logo filter based on smooth brightness
+    const getLogoFilter = () => {
+        if (processorActive) {
+            const brightness = 1 + (logoBrightness * 1.5); // 1.0 to 2.5
+            const dropShadow = logoBrightness * 30; // 0 to 30px
+            return `grayscale(100%) brightness(${brightness}) contrast(1.5) drop-shadow(0 0 ${dropShadow}px rgba(255,255,255,1))`;
+        } else if (logoActive) {
+            return 'grayscale(100%) brightness(1.5) contrast(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.9))';
+        }
+        return 'grayscale(100%) brightness(0.1) contrast(1.0) drop-shadow(0 0 0 rgba(0,0,0,0))';
+    };
+
+    return (
+        <AnimatePresence>
+            {isLoading && (
+                <motion.div
+                    className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black overflow-hidden cursor-pointer"
+                    initial={{ opacity: 1, filter: 'grayscale(100%)' }}
+                    animate={{
+                        filter: processorActive ? 'grayscale(0%)' : 'grayscale(100%)',
+                        transition: { duration: 1.0, ease: "easeInOut" }
+                    }}
+                    exit={{
+                        opacity: 0,
+                        filter: 'blur(20px) grayscale(0%)',
+                        transition: { duration: 1.5, ease: "easeInOut" }
+                    }}
+                    onClick={handleSkip}
+                >
+                    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <svg
+                            viewBox="0 0 800 800"
+                            className="w-full h-full max-w-[800px] max-h-[800px]"
+                            style={{
+                                maskImage: 'radial-gradient(circle at center, black 60%, transparent 95%)'
+                            }}
+                        >
+                            <defs>
+                                <linearGradient id="pcb-silver" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#4a4a4a" />
+                                    <stop offset="35%" stopColor="#8c8c8c" />
+                                    <stop offset="100%" stopColor="#1a1a1a" />
+                                </linearGradient>
+
+                                <linearGradient id="pcb-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#0f0f0f" />
+                                    <stop offset="100%" stopColor="#000000" />
+                                </linearGradient>
+
+                                <linearGradient id="gold-pins" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#926F34" />
+                                    <stop offset="50%" stopColor="#F7E7CE" />
+                                    <stop offset="100%" stopColor="#926F34" />
+                                </linearGradient>
+
+                                <linearGradient id="metal-surface" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#1a1a1a" />
+                                    <stop offset="25%" stopColor="#333" />
+                                    <stop offset="50%" stopColor="#555" />
+                                    <stop offset="75%" stopColor="#333" />
+                                    <stop offset="100%" stopColor="#1a1a1a" />
+                                </linearGradient>
+
+                                <filter id="ios-glow">
+                                    <feGaussianBlur stdDeviation="8" result="blur1" />
+                                    <feGaussianBlur stdDeviation="16" result="blur2" />
+                                    <feGaussianBlur stdDeviation="32" result="blur3" />
+                                    <feMerge>
+                                        <feMergeNode in="blur3" />
+                                        <feMergeNode in="blur2" />
+                                        <feMergeNode in="blur1" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <motion.g
+                                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                                animate={{
+                                    opacity: 1,
+                                    scale: 1,
+                                    y: 0
+                                }}
+                                transition={{
+                                    opacity: { duration: 1.5, ease: [0.16, 1, 0.3, 1] },
+                                    scale: { duration: 1.5, ease: [0.16, 1, 0.3, 1] },
+                                    y: { duration: 1.5, ease: [0.16, 1, 0.3, 1] }
+                                }}
+                            >
+                                <motion.rect
+                                    x="235" y="235" width="330" height="330"
+                                    rx="18"
+                                    fill="none"
+                                    stroke="rgba(150,180,255,0)"
+                                    strokeWidth="0"
+                                    initial={{ opacity: 0 }}
+                                    animate={{
+                                        opacity: processorActive ? 1 : 0
+                                    }}
+                                    transition={{
+                                        duration: 2.5,
+                                        ease: [0.25, 0.1, 0.25, 1]
+                                    }}
+                                    style={{
+                                        filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.8)) drop-shadow(0 0 40px rgba(150,180,255,1)) drop-shadow(0 0 80px rgba(150,180,255,0.8)) drop-shadow(0 0 120px rgba(150,180,255,0.6))'
+                                    }}
+                                />
+
+                                <motion.rect
+                                    x="230" y="230" width="340" height="340"
+                                    rx="20"
+                                    fill="none"
+                                    stroke="rgba(150,180,255,0)"
+                                    strokeWidth="0"
+                                    initial={{ opacity: 0 }}
+                                    animate={{
+                                        opacity: processorActive ? 1 : 0
+                                    }}
+                                    transition={{
+                                        duration: 2.0,
+                                        ease: [0.25, 0.1, 0.25, 1]
+                                    }}
+                                    filter="url(#ios-glow)"
+                                />
+
+                                <rect
+                                    x="250" y="250" width="300" height="300"
+                                    rx="12"
+                                    fill="url(#pcb-dark)"
+                                    stroke="#333"
+                                    strokeWidth="2"
+                                />
+
+                                <rect
+                                    x="250" y="250" width="300" height="300"
+                                    rx="12"
+                                    fill="url(#pcb-silver)"
+                                    stroke="#888"
+                                    strokeWidth="2"
+                                    style={{
+                                        opacity: processorActive ? 1 : 0,
+                                        transition: 'opacity 2.0s ease-in-out'
+                                    }}
+                                />
+
+                                {Array.from({ length: 4 }).map((_, side) => (
+                                    <g key={`side-${side}`} transform={`rotate(${side * 90} 400 400)`}>
+                                        {Array.from({ length: 40 }).map((_, i) => (
+                                            <rect
+                                                key={`pin-${side}-${i}`}
+                                                x={260 + i * 7}
+                                                y="242"
+                                                width="4"
+                                                height="8"
+                                                fill="url(#gold-pins)"
+                                                rx="1"
+                                            />
+                                        ))}
+                                    </g>
+                                ))}
+
+                                <rect
+                                    x="280" y="280" width="240" height="240"
+                                    rx="8"
+                                    fill="url(#metal-surface)"
+                                    stroke="#666"
+                                    strokeWidth="1"
+                                    style={{
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.8))'
+                                    }}
+                                />
+
+                                <motion.image
+                                    href="/src/assets/images/logo_new.png"
+                                    x="320"
+                                    y="320"
+                                    width="160"
+                                    height="160"
+                                    animate={{
+                                        opacity: processorActive ? 1 : (logoActive ? [0.25, 1, 0.25] : 0.05)
+                                    }}
+                                    transition={{
+                                        duration: 3,
+                                        repeat: processorActive ? 0 : (logoActive ? Infinity : 0),
+                                        ease: "easeInOut"
+                                    }}
+                                    style={{
+                                        filter: getLogoFilter(),
+                                        mixBlendMode: processorActive ? 'normal' : 'hard-light'
+                                    }}
+                                />
+
+                                <path
+                                    d="M 280 320 L 260 320 M 280 480 L 260 480 M 520 320 L 540 320 M 520 480 L 540 480"
+                                    stroke="url(#gold-pins)"
+                                    strokeWidth="2"
+                                    opacity="0.4"
+                                />
+
+                                <circle cx="295" cy="295" r="4" fill="#111" stroke="#444" strokeWidth="1" />
+                                <circle cx="505" cy="295" r="4" fill="#111" stroke="#444" strokeWidth="1" />
+                                <circle cx="295" cy="505" r="4" fill="#111" stroke="#444" strokeWidth="1" />
+                                <circle cx="505" cy="505" r="4" fill="#111" stroke="#444" strokeWidth="1" />
+                            </motion.g>
+                        </svg>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
+export default LoadingScreen;
