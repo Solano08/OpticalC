@@ -22,9 +22,9 @@ const CurrentStateScene: FC = () => {
     const [hoveredId, setHoveredId] = useState<number | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Pre-calculate particles data for the title
+    // Pre-calculate particles data for the title - Reducido de 8 a 4 para mejor rendimiento
     const titleParticlesData = useMemo(() => {
-        return Array.from({ length: 12 }, (_, i) => {
+        return Array.from({ length: 4 }, (_, i) => {
             const seed = 1000 + i;
             return {
                 id: `title-particle-${i}`,
@@ -87,7 +87,9 @@ const CurrentStateScene: FC = () => {
                         loop
                         muted
                         playsInline
+                        preload="auto"
                         className="absolute inset-0 w-full h-full object-cover"
+                        style={{ willChange: 'auto' }}
                         onLoadedMetadata={(e) => {
                             const video = e.currentTarget;
                             if (video) video.playbackRate = 0.5;
@@ -148,7 +150,7 @@ const CurrentStateScene: FC = () => {
                             {titleParticlesData.map((particle) => (
                                 <motion.div
                                     key={particle.id}
-                                    className="absolute rounded-full bg-white"
+                                    className="absolute rounded-full bg-white will-change-transform"
                                     style={{
                                         width: `${particle.size}px`,
                                         height: `${particle.size}px`,
@@ -214,17 +216,18 @@ const CurrentStateScene: FC = () => {
                                         duration: 0.5,
                                         ease: [0.25, 0.1, 0.25, 1] // Smooth easing
                                     }}
-                                    className="relative w-full rounded-3xl overflow-hidden cursor-pointer"
+                                    className="relative w-full rounded-3xl overflow-hidden cursor-pointer will-change-[height,transform]"
                                     style={{
                                         background: isHovered
                                             ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)'
                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                                        backdropFilter: isHovered ? 'blur(20px)' : 'blur(16px)',
-                                        WebkitBackdropFilter: isHovered ? 'blur(20px)' : 'blur(16px)',
+                                        backdropFilter: isHovered ? 'blur(16px)' : 'blur(12px)',
+                                        WebkitBackdropFilter: isHovered ? 'blur(16px)' : 'blur(12px)',
                                         border: '1px solid rgba(255, 255, 255, 0.2)',
                                         boxShadow: isHovered
                                             ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 30px rgba(255, 255, 255, 0.1)'
                                             : '0 4px 24px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05)',
+                                        transform: 'translateZ(0)', // Force GPU acceleration
                                     }}
                                 >
                                     {/* Gradient overlay */}
@@ -233,7 +236,7 @@ const CurrentStateScene: FC = () => {
                                     {/* Noise texture for realism */}
                                     <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay pointer-events-none" />
 
-                                    {/* Small floating particles - only visible on hover */}
+                                    {/* Small floating particles - reducido de 3 a 2 por tarjeta */}
                                     <AnimatePresence>
                                         {isHovered && (
                                             <motion.div
@@ -242,13 +245,14 @@ const CurrentStateScene: FC = () => {
                                                 exit={{ opacity: 0 }}
                                                 className="absolute inset-0 overflow-hidden pointer-events-none"
                                             >
-                                                {[...Array(4)].map((_, i) => (
+                                                {[...Array(2)].map((_, i) => (
                                                     <motion.div
                                                         key={i}
-                                                        className="absolute w-1.5 h-1.5 bg-white/40 rounded-full"
+                                                        className="absolute w-1.5 h-1.5 bg-white/40 rounded-full will-change-transform"
                                                         style={{
-                                                            left: `${20 + (i * 20)}%`,
+                                                            left: `${20 + (i * 25)}%`,
                                                             top: `${30 + (i % 2) * 40}%`,
+                                                            transform: 'translateZ(0)', // Force GPU acceleration
                                                         }}
                                                         animate={{
                                                             y: [0, -30, 0],
@@ -256,7 +260,7 @@ const CurrentStateScene: FC = () => {
                                                             scale: [0.8, 1.2, 0.8],
                                                         }}
                                                         transition={{
-                                                            duration: 2 + Math.random() * 2,
+                                                            duration: 2 + i * 0.5,
                                                             repeat: Infinity,
                                                             delay: i * 0.3,
                                                             ease: "easeInOut"

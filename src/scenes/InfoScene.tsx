@@ -1,10 +1,9 @@
-import { type FC, useState, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { type FC, Suspense } from 'react';
+import { motion } from 'framer-motion';
 import Spline from '@splinetool/react-spline';
 import SceneTransition from '../components/ui/SceneTransition';
-import opticalProcessorImg from '../assets/images/optical_processor.png';
-import lightTransmissionImg from '../assets/images/light_transmission.png';
-import quantumOpticalImg from '../assets/images/quantum_optical.png';
+import img1 from '../assets/images/img1.png';
+import img2 from '../assets/images/img2.png';
 
 
 interface ObjectInfo {
@@ -16,12 +15,137 @@ interface ObjectInfo {
     extra: string;
 }
 
+// Component for generated Speed and Efficiency image
+const SpeedEfficiencyImage: FC = () => {
+    return (
+        <div className="w-full h-full flex items-center justify-center bg-white rounded-lg p-8">
+            <svg 
+                viewBox="0 0 400 300" 
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                {/* Background - White */}
+                <rect width="400" height="300" fill="white" />
+                
+                {/* Light rays representing speed */}
+                <g opacity="0.9">
+                    {/* Main light beam */}
+                    <path
+                        d="M 50 150 L 350 150"
+                        stroke="url(#lightGradient)"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        fill="none"
+                    />
+                    
+                    {/* Speed lines */}
+                    {[80, 120, 160, 200, 240, 280, 320].map((x, i) => (
+                        <g key={i}>
+                            <line
+                                x1={x}
+                                y1={130}
+                                x2={x + 20}
+                                y2={150}
+                                stroke="#3B82F6"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                opacity={0.7 - i * 0.05}
+                            />
+                            <line
+                                x1={x}
+                                y1={170}
+                                x2={x + 20}
+                                y2={150}
+                                stroke="#3B82F6"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                opacity={0.7 - i * 0.05}
+                            />
+                        </g>
+                    ))}
+                    
+                    {/* Photon particles */}
+                    {[100, 150, 200, 250, 300].map((x, i) => (
+                        <circle
+                            key={i}
+                            cx={x}
+                            cy={150}
+                            r="6"
+                            fill="url(#photonGradient)"
+                            opacity={0.8}
+                        >
+                            <animate
+                                attributeName="opacity"
+                                values="0.3;1;0.3"
+                                dur="1.5s"
+                                begin={`${i * 0.3}s`}
+                                repeatCount="indefinite"
+                            />
+                        </circle>
+                    ))}
+                    
+                    {/* Energy efficiency indicator - Green leaf/checkmark */}
+                    <g transform="translate(320, 80)">
+                        <circle
+                            cx="0"
+                            cy="0"
+                            r="25"
+                            fill="#10B981"
+                            opacity="0.2"
+                        />
+                        <path
+                            d="M -8 -2 L -2 4 L 8 -6"
+                            stroke="#10B981"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            fill="none"
+                        />
+                    </g>
+                    
+                    {/* Speed indicator */}
+                    <g transform="translate(320, 220)">
+                        <path
+                            d="M -15 0 L 0 -15 L 15 0 L 0 15 Z"
+                            fill="#EF4444"
+                            opacity="0.8"
+                        />
+                        <text
+                            x="0"
+                            y="5"
+                            textAnchor="middle"
+                            fontSize="12"
+                            fill="white"
+                            fontWeight="bold"
+                        >
+                            c
+                        </text>
+                    </g>
+                </g>
+                
+                {/* Gradients */}
+                <defs>
+                    <linearGradient id="lightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#60A5FA" stopOpacity="0.3" />
+                        <stop offset="50%" stopColor="#3B82F6" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0.3" />
+                    </linearGradient>
+                    <radialGradient id="photonGradient" cx="50%" cy="50%">
+                        <stop offset="0%" stopColor="#60A5FA" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.6" />
+                    </radialGradient>
+                </defs>
+            </svg>
+        </div>
+    );
+};
+
 const objectsData: ObjectInfo[] = [
     {
         id: 1,
         title: 'Concepto Fundamental',
         description: 'La computación óptica utiliza luz, en lugar de electricidad, para procesar y transmitir información',
-        image: opticalProcessorImg,
+        image: img1,
         details: [
             'Procesamiento mediante fotones en lugar de electrones',
             'Manipulación de datos usando propiedades de la luz',
@@ -34,7 +158,7 @@ const objectsData: ObjectInfo[] = [
         id: 2,
         title: 'Velocidad y Eficiencia',
         description: 'Los fotones viajan a la velocidad de la luz, permitiendo cálculos y transmisión de datos extremadamente rápidos',
-        image: lightTransmissionImg,
+        image: 'generated', // Special marker for generated image
         details: [
             'Velocidad de transmisión casi instantánea',
             'Cálculos paralelos masivos',
@@ -47,7 +171,7 @@ const objectsData: ObjectInfo[] = [
         id: 3,
         title: 'Componentes y Arquitectura',
         description: 'En la computación óptica, la información se codifica en haces y ondas de luz, manipulados con lentes, espejos y láseres',
-        image: quantumOpticalImg,
+        image: img2,
         details: [
             'Elementos fotónicos: lentes, espejos, láseres y fibras ópticas',
             'Diseño de circuitos fotónicos completamente ópticos o híbridos',
@@ -59,8 +183,6 @@ const objectsData: ObjectInfo[] = [
 ];
 
 const InfoScene: FC = () => {
-    const [expandedId, setExpandedId] = useState<number | null>(null);
-
     return (
         <section className="relative bg-gradient-to-br from-[#F8F9FA] via-[#F5F5F7] to-[#FAFAFA] py-24 md:py-32">
             {/* Elegant transitions - behind all content */}
@@ -81,18 +203,13 @@ const InfoScene: FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-[#F8F9FA]/80 via-[#F5F5F7]/80 to-[#FAFAFA]/80 z-[5]" />
             </div>
 
-            {/* Background Particles */}
+            {/* Background Particles - reducido de 6 a 3 para mejor rendimiento */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-[6]">
                 {[
                     // Optimized particles - fewer count, less blur radius for performance
-                    { width: 400, height: 400, color: 'bg-blue-300/20', top: '-10%', left: '-10%', delay: 0, duration: 35, blur: 'blur-3xl' },
-                    { width: 300, height: 300, color: 'bg-orange-300/20', top: '20%', right: '-5%', delay: 2, duration: 30, blur: 'blur-3xl' },
-                    { width: 350, height: 350, color: 'bg-blue-400/15', bottom: '10%', left: '10%', delay: 5, duration: 38, blur: 'blur-3xl' },
-
-                    // Small particles
-                    { width: 60, height: 60, color: 'bg-blue-400/40', top: '15%', left: '25%', delay: 1, duration: 15, blur: 'blur-xl' },
-                    { width: 80, height: 80, color: 'bg-orange-300/40', top: '30%', right: '15%', delay: 3, duration: 18, blur: 'blur-xl' },
-                    { width: 50, height: 50, color: 'bg-white/30', bottom: '25%', left: '15%', delay: 2, duration: 20, blur: 'blur-lg' },
+                    { width: 400, height: 400, color: 'bg-blue-300/20', top: '-10%', left: '-10%', delay: 0, duration: 35, blur: 'blur-2xl' },
+                    { width: 300, height: 300, color: 'bg-orange-300/20', top: '20%', right: '-5%', delay: 2, duration: 30, blur: 'blur-2xl' },
+                    { width: 350, height: 350, color: 'bg-blue-400/15', bottom: '10%', left: '10%', delay: 5, duration: 38, blur: 'blur-2xl' },
                 ].map((particle, i) => (
                     <motion.div
                         key={i}
@@ -104,6 +221,7 @@ const InfoScene: FC = () => {
                             left: particle.left,
                             right: particle.right,
                             bottom: particle.bottom,
+                            transform: 'translateZ(0)', // Force GPU acceleration
                         }}
                         animate={{
                             x: ['-10%', '10%', '-10%'],
@@ -124,7 +242,7 @@ const InfoScene: FC = () => {
 
             </div>
 
-            {/* Bloques uno debajo de otro con animación suave al entrar */}
+            {/* Bloques uno debajo de otro con animación suave al entrar - sin efecto de click */}
             <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 space-y-24">
                 {objectsData.map((data, index) => (
                     <motion.div
@@ -136,23 +254,21 @@ const InfoScene: FC = () => {
                         className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 !== 0 ? 'lg:grid-flow-col-dense' : ''
                             }`}
                     >
-                        {/* Imagen (click para expandir/contraer) */}
-                        <motion.button
-                            type="button"
-                            onClick={() => setExpandedId((prev) => (prev === data.id ? null : data.id))}
-                            className={`relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-3xl ${index % 2 !== 0 ? 'lg:order-2' : ''
-                                }`}
-                        >
+                        {/* Imagen - sin efecto de click */}
+                        <div className={`relative group rounded-3xl ${index % 2 !== 0 ? 'lg:order-2' : ''}`}>
                             <div className="absolute inset-0 bg-gradient-to-tr from-blue-200/30 via-orange-100/20 to-blue-200/30 rounded-3xl blur-xl transform group-hover:scale-105 transition-transform duration-500 opacity-50" />
-                            <div className="relative h-[340px] md:h-[420px] bg-white/40 backdrop-blur-sm rounded-3xl border border-white/60 shadow-lg flex items-center justify-center overflow-hidden p-8 group-hover:border-white/80 transition-all duration-300 cursor-pointer">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                <img
-                                    src={data.image}
-                                    alt={data.title}
-                                    className="w-full h-full object-contain drop-shadow-xl relative z-10"
-                                />
+                            <div className="relative h-[340px] md:h-[420px] bg-white/50 rounded-3xl border border-white/60 shadow-lg flex items-center justify-center overflow-hidden p-8">
+                                {data.image === 'generated' ? (
+                                    <SpeedEfficiencyImage />
+                                ) : (
+                                    <img
+                                        src={data.image}
+                                        alt={data.title}
+                                        className="w-full h-full object-contain drop-shadow-xl relative z-10"
+                                    />
+                                )}
                             </div>
-                        </motion.button>
+                        </div>
 
                         {/* Texto */}
                         <div className={`space-y-8 ${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
@@ -160,59 +276,25 @@ const InfoScene: FC = () => {
                                 {data.title}
                             </motion.h2>
 
-                            <div className="relative min-h-[200px]">
-                                <AnimatePresence mode="wait">
-                                    {expandedId === data.id ? (
-                                        <motion.div
-                                            key="expanded"
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -20 }}
-                                            transition={{ duration: 0.4, ease: 'easeOut' }}
-                                            className="space-y-6"
+                            <div className="space-y-6">
+                                <p className="text-lg md:text-2xl text-slate-700 leading-relaxed font-medium">
+                                    {data.description}
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {data.details.map((detail, i) => (
+                                        <div
+                                            key={i}
+                                            className="liquid-glass p-5 hover:bg-white/80 transition-all duration-300"
                                         >
-                                            <p className="text-base md:text-lg text-slate-700 leading-relaxed">
-                                                {data.extra}
-                                            </p>
-                                            <ul className="space-y-3">
-                                                {data.details.map((detail, i) => (
-                                                    <li key={i} className="flex items-start gap-3">
-                                                        <span className="mt-1 w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-orange-300" />
-                                                        <span className="text-slate-800 text-sm md:text-base">{detail}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            key="summary"
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -20 }}
-                                            transition={{ duration: 0.4, ease: 'easeOut' }}
-                                            className="space-y-6"
-                                        >
-                                            <p className="text-lg md:text-2xl text-slate-700 leading-relaxed font-medium">
-                                                {data.description}
-                                            </p>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {data.details.map((detail, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className="liquid-glass p-5 hover:bg-white/80 transition-all duration-300"
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-orange-300" />
-                                                            <span className="text-slate-800 font-semibold text-sm md:text-base">
-                                                                {detail}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-orange-300" />
+                                                <span className="text-slate-800 font-semibold text-sm md:text-base">
+                                                    {detail}
+                                                </span>
                                             </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </motion.div>

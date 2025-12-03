@@ -86,3 +86,16 @@ Una vez que tengas el contenido del documento Word extraído:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -18,18 +18,22 @@ const SmoothScroll: FC<SmoothScrollProps> = ({ children }) => {
             smoothWheel: true,
             wheelMultiplier: 1,
             touchMultiplier: 2,
+            // Optimizaciones de rendimiento
+            infinite: false,
         });
 
         lenisRef.current = lenis;
 
+        let rafId: number;
         function raf(time: number) {
             lenis.raf(time);
-            requestAnimationFrame(raf);
+            rafId = requestAnimationFrame(raf);
         }
 
-        requestAnimationFrame(raf);
+        rafId = requestAnimationFrame(raf);
 
         return () => {
+            cancelAnimationFrame(rafId);
             lenis.destroy();
         };
     }, []);
